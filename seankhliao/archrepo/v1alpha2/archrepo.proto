@@ -1,0 +1,118 @@
+syntax = "proto3";
+
+package seankhliao.archrepo.v1alpha2;
+
+import "google/api/field_behavior.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "go.seankhliao/apis/archrepo/v1alpha2;archrepo";
+
+service RepositoryService {
+  rpc ListRepositories(ListRepositoriesRequest) returns (ListRepositoriesResponse) {}
+  rpc GetRepository(GetRepositoryRequest) returns (Repository) {}
+  rpc CreateRepository(CreateRepositoryRequest) returns (Repository) {}
+  rpc UpdateRepository(UpdateRepositoryRequest) returns (Repository) {}
+  rpc DeleteRepository(DeleteRepositoryRequest) returns (google.protobuf.Empty) {}
+
+  rpc ListPackageVersions(ListPackageVersionsRequest) returns (ListPackageVersionsResponse) {}
+  rpc GetPackageVersion(GetPackageVersionRequest) returns (PackageVersion) {}
+  rpc CreatePackageVersion(CreatePackageVersionRequest) returns (PackageVersion) {}
+  rpc UpdatePackageVersion(UpdatePackageVersionRequest) returns (PackageVersion) {}
+  rpc DeletePackageVersion(DeletePackageVersionRequest) returns (google.protobuf.Empty) {}
+}
+
+// Resources
+
+message Repository {
+  string name = 1;
+  google.protobuf.Timestamp create_time = 2;
+  google.protobuf.Timestamp update_time = 3;
+  map<string, string> annotations = 4;
+  string etag = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
+}
+
+message PackageVersion {
+  string name = 1;
+  google.protobuf.Timestamp create_time = 2;
+  google.protobuf.Timestamp update_time = 3;
+  map<string, string> annotations = 4;
+  string etag = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  string parent = 6;
+  bytes data= 7;
+}
+
+// Message types
+
+// Repository
+
+message ListRepositoriesRequest {
+  int32 page_size = 1 [(google.api.field_behavior) = OPTIONAL];
+  string page_token = 2 [(google.api.field_behavior) = OPTIONAL];
+}
+
+message ListRepositoriesResponse {
+  repeated Repository repositories = 1;
+  string next_page_token = 2;
+  int32 total_size = 3;
+}
+
+message CreateRepositoryRequest {
+  string name = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message GetRepositoryRequest {
+  string name = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message UpdateRepositoryRequest {
+  Repository repository = 1 [(google.api.field_behavior) = REQUIRED];
+  google.protobuf.FieldMask update_mask = 2 [(google.api.field_behavior) = REQUIRED];
+  bool allow_missing = 3 [(google.api.field_behavior) = OPTIONAL];
+}
+
+message DeleteRepositoryRequest {
+  string name = 1 [(google.api.field_behavior) = REQUIRED];
+  string etag = 2 [(google.api.field_behavior) = OPTIONAL];
+  bool allow_missing = 3 [(google.api.field_behavior) = OPTIONAL];
+}
+
+
+// PackageVersion
+
+message ListPackageVersionsRequest {
+  int32 page_size = 1 [(google.api.field_behavior) = OPTIONAL];
+  string page_token = 2 [(google.api.field_behavior) = OPTIONAL];
+}
+
+message ListPackageVersionsResponse {
+  repeated PackageVersion package_versions = 1;
+  string next_page_token = 2;
+  int32 total_size = 3;
+}
+
+message CreatePackageVersionRequest {
+  string name = 1 [(google.api.field_behavior) = REQUIRED];
+  string parent = 2;
+  bytes data = 3;
+}
+
+message GetPackageVersionRequest {
+  string name = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message UpdatePackageVersionRequest {
+  PackageVersion repository = 1 [(google.api.field_behavior) = REQUIRED];
+  google.protobuf.FieldMask update_mask = 2 [(google.api.field_behavior) = REQUIRED];
+  string etag = 3 [(google.api.field_behavior) = OPTIONAL];
+  bool allow_missing = 4 [(google.api.field_behavior) = OPTIONAL];
+}
+
+message DeletePackageVersionRequest {
+  string name = 1 [(google.api.field_behavior) = REQUIRED];
+  string etag = 2 [(google.api.field_behavior) = OPTIONAL];
+  bool allow_missing = 3 [(google.api.field_behavior) = OPTIONAL];
+  string parent = 4;
+}

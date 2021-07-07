@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package archrepo;
+
+option go_package = "go.seankhliao.com/apis/archrepo";
+
+service RepoService {
+  rpc CreatePackage(CreatePackageRequest) returns (CreatePackageResponse);
+}
+
+message CreatePackageRequest {}
+
+message CreatePackageResponse {}
